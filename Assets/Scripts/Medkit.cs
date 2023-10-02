@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Medkit : MonoBehaviour
 {
-    [SerializeField] int healAmount = 25;
+    [SerializeField] float healAmount = 25;
     GameObject playerCharacter;
     PlayerController player;
     private void Awake()
@@ -14,8 +14,17 @@ public class Medkit : MonoBehaviour
     }
     private void OnTriggerEnter(Collider other)
     {
-        player.currentHealth = player.currentHealth + healAmount;
-        Debug.Log(player.currentHealth);
-        Destroy(gameObject);
+        if(player.currentHealth == 100)
+        {
+            Debug.Log("hi");
+            return;
+        }
+        else
+        {
+            player.currentHealth = player.currentHealth + healAmount;
+            Debug.Log(player.currentHealth);
+            Destroy(gameObject);
+        }
+
     }
 }

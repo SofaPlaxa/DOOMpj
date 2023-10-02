@@ -1,42 +1,60 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
-    [SerializeField] float forwardForce = 1;
-    [SerializeField] float sideForce = 1;
+    [SerializeField] float speed = 10;
     [SerializeField] float sensitivity = 1;
     [SerializeField] public float currentHealth;
-    [SerializeField] float maxHealth = 100;
+    [SerializeField] public float maxHealth = 100;
 
-    Rigidbody rb;
+    CharacterController characterController;
+
+    Vector3 surfaceNormal;
+
     private void Awake()
     {
-        rb = GetComponent<Rigidbody>();
+        characterController = GetComponent<CharacterController>();
         currentHealth = maxHealth;
     }
-    void FixedUpdate()
+
+    float verticalSpeed;
+
+    private void Update()
     {
-
         float mouseX = Input.GetAxis("Mouse X");
-        float rotation = mouseX * sensitivity * Time.fixedDeltaTime;
-
-        transform.Rotate(0, rotation, 0);
-
         float horizontal = Input.GetAxis("Horizontal");
         float vertical = Input.GetAxis("Vertical");
 
-        Vector3 force = transform.forward * vertical * Time.deltaTime * forwardForce;
-        force += transform.right * horizontal * Time.fixedDeltaTime * sideForce;
+        Vector3 moveDirection = new Vector3(horizontal, 0, vertical);
 
-        rb.AddForce(force);
-    }
-    private void Update()
-    {
+        moveDirection = Vector3.ClampMagnitude(moveDirection, 1);
+        moveDirection = transform.TransformDirection(moveDirection) * speed;
+        moveDirection = Vector3.ProjectOnPlane(moveDirection, surfaceNormal);
+
+
+        transform.Rotate(new Vector3(0, mouseX * sensitivity * Time.deltaTime, 0));
+
+        float verticalSpeed = 0;
+
+        if (characterController.isGrounded) 
+        {
+            verticalSpeed = 0;
+        }
+        else
+        {
+            verticalSpeed -= 9.8f * Time.deltaTime;
+        }
+        characterController.Move((moveDirection * speed + Vector3.up * verticalSpeed) * Time.deltaTime);
+
         if (currentHealth > maxHealth)
         {
             currentHealth = maxHealth;
-        }    
+        }
+    }
+
+    void OnControllerColliderHit(ControllerColliderHit hit)
+    {
+        Debug.DrawLine(hit.point, hit.point + hit.normal * 10, Color.red);
+        surfaceNormal = hit.normal;
     }
 }
