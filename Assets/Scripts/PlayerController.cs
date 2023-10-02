@@ -7,11 +7,14 @@ public class PlayerController : MonoBehaviour
     [SerializeField] float forwardForce = 1;
     [SerializeField] float sideForce = 1;
     [SerializeField] float sensitivity = 1;
+    [SerializeField] public float currentHealth;
+    [SerializeField] float maxHealth = 100;
 
     Rigidbody rb;
     private void Awake()
     {
         rb = GetComponent<Rigidbody>();
+        currentHealth = maxHealth;
     }
     void FixedUpdate()
     {
@@ -31,6 +34,9 @@ public class PlayerController : MonoBehaviour
     }
     private void Update()
     {
-
+        if (currentHealth > maxHealth)
+        {
+            currentHealth = maxHealth;
+        }    
     }
 }
