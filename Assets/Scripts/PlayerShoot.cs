@@ -10,6 +10,7 @@ public class PlayerShoot : MonoBehaviour
         foreach(DamagableComponent enemy in EnemyManager.Enemies)
         {
             Vector3 enemyDirection = (enemy.transform.position - transform.position).normalized;
+            //print(Mathf.Acos(Vector3.Dot))
         }
 
         //if(Physics.Raycast((transform.position, transform.forward, out RaycastHit hit) && hit.collider.TryGetComponent(out DamagableComponent damagable))
