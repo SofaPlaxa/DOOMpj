@@ -33,6 +33,9 @@ public class PlayerController : MonoBehaviour
     {
         characterController = GetComponent<CharacterController>();
         currentHealth = maxHealth;
+
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
     }
 
     float verticalSpeed;
