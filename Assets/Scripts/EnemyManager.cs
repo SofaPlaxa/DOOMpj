@@ -2,9 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class EnemyManager
+public static class EnemyManager
 {
     static HashSet<DamagableComponent> damagableComponents = new HashSet<DamagableComponent>();
+
     public static IReadOnlyCollection<DamagableComponent> Enemies => damagableComponents;
     public static void RegisterEnemy(DamagableComponent damagable)
     {

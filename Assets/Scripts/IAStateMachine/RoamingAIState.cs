@@ -11,32 +11,35 @@ public class RoamingAIState : AIState
     {
         AIController = aIController;
     }
+
     public override void Enable()
     {
-        AIController.MoveTo(GetRandomPosInRadius(10), HandleMoveToCompleted);
+        AIController.MoveTo(GetRandomPosRadius(10), HandleMoveToComplited);
     }
+
     public override void Disable()
     {
-
+        
     }
-    void HandleMoveToCompleted(MoveToCompletedReason reason)
+
+    void HandleMoveToComplited(MoveToComlitedReason reason)
     {
-        Debug.Log(reason);
-
-        if (reason == MoveToCompletedReason.Failure)
+        Debug.Log("reason");
+        if (reason == MoveToComlitedReason.Failure)
             return;
-
         ChangeState("Roaming");
     }
     
-    
-    Vector3 GetRandomPosInRadius(float radius)
+
+    Vector3 GetRandomPosRadius(float radius)
     {
-        Vector3 randomDir = Random.insideUnitSphere * radius;
-        Vector3 targetPos = AIController.transform.position + randomDir;
+        Vector3 randonDir = Random.insideUnitSphere * radius;
+        Vector3 targetPos = AIController.transform.position + randonDir;
+
         if (NavMesh.SamplePosition(targetPos, out NavMeshHit hit, radius, NavMesh.AllAreas))
             return hit.position;
         else
-           return AIController.transform.position;
+            return AIController.transform.position;
+
     }
 }

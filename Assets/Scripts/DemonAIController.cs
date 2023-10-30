@@ -6,10 +6,9 @@ public class DemonAIController : AIController
 {
     AIStateMachine stateMachine;
 
-    void Start()
+    private void Start()
     {
         stateMachine = new AIStateMachine();
-
         stateMachine.AddState("Roaming", new RoamingAIState(this, stateMachine));
         stateMachine.SetActiveState("Roaming");
     }

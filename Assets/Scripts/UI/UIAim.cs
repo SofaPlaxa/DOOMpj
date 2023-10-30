@@ -3,13 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-
 public class UIAim : MonoBehaviour
 {
-
     [SerializeField] Image aimImage;
-
-    public bool CanShoot { get; set; }
+ 
+   public bool CanShoot { get; set; }
 
     private void Update()
     {

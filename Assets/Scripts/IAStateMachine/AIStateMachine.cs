@@ -8,7 +8,6 @@ public class AIStateMachine
 
     AIState activeState;
 
-
     public AIStateMachine()
     {
         States = new Dictionary<string, AIState>();
@@ -23,6 +22,6 @@ public class AIStateMachine
     {
         activeState?.Disable();
         activeState = States[stateId];
-        States[stateId].Enable();
+        activeState.Enable();
     }
 }

@@ -10,6 +10,7 @@ public abstract class AIState
     {
         StateMachine = stateMachine;
     }
+
     public abstract void Enable();
     public abstract void Disable();
 
