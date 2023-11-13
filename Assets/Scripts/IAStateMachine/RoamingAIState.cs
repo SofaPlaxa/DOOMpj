@@ -14,7 +14,7 @@ public class RoamingAIState : AIState
 
     public override void Enable()
     {
-        AIController.MoveTo(GetRandomPosRadius(10), HandleMoveToComplited);
+        AIController.MoveTo(GetRandomPosRadius(10), HandleMoveToCompleted);
     }
 
     public override void Disable()
@@ -22,10 +22,10 @@ public class RoamingAIState : AIState
         
     }
 
-    void HandleMoveToComplited(MoveToComlitedReason reason)
+    void HandleMoveToCompleted(MoveToCompletedReason reason)
     {
         Debug.Log("reason");
-        if (reason == MoveToComlitedReason.Failure)
+        if (reason == MoveToCompletedReason.Failure)
             return;
         ChangeState("Roaming");
     }

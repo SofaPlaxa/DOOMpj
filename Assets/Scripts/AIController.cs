@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityEngine.AI;
 using System;
 
-public enum MoveToComlitedReason
+public enum MoveToCompletedReason
 {
     Succses,
     Failure,
@@ -19,7 +19,7 @@ public class AIController : BaseCharacterController
     int pathPointIndex;
     NavMeshPath path;
 
-    Action<MoveToComlitedReason> MoveToComplited;
+    Action<MoveToCompletedReason> MoveToCompleted;
 
     protected override void Awake()
     {
@@ -28,16 +28,22 @@ public class AIController : BaseCharacterController
         path = new NavMeshPath();
     }
 
-    public bool MoveTo(Vector3 targetPos, Action<MoveToComlitedReason> complited = null)
+    public bool MoveTo(Vector3 targetPos, Action<MoveToCompletedReason> complited = null)
     {
         if (!isMoveToCompleted)
-            InvokeMoveToComplited(MoveToComlitedReason.Aborted);
+            InvokeMoveToCompleted(MoveToCompletedReason.Aborted);
 
-       MoveToComplited = complited;
+        MoveToCompleted = complited;
        bool hasPath = NavMesh.CalculatePath(transform.position, targetPos, NavMesh.AllAreas, path);
 
-       if (hasPath)
+       if (!hasPath)
         {
+            if(path.corners.Length == 1)
+            {
+                InvokeMoveToCompleted(MoveToCompletedReason.Succses);
+                return true;
+            }
+
             pathPointIndex = 1;
         }
 
@@ -45,7 +51,7 @@ public class AIController : BaseCharacterController
 
         if(!hasPath)
         {
-            InvokeMoveToComplited(MoveToComlitedReason.Failure);
+            InvokeMoveToCompleted(MoveToCompletedReason.Failure);
         }
 
         print(path.status + " " + path.corners.Length);
@@ -79,7 +85,7 @@ public class AIController : BaseCharacterController
         {
             if(pathPointIndex + 1 >= path.corners.Length)
             {
-                InvokeMoveToComplited(MoveToComlitedReason.Succses);
+                InvokeMoveToCompleted(MoveToCompletedReason.Succses);
                 
                 return;
             }
@@ -91,15 +97,15 @@ public class AIController : BaseCharacterController
         Vector3 direction = (targetPos - sourcePos).normalized;
 
 
-
+        SetRotation(Quaternion.LookRotation(direction, transform.up).eulerAngles.y);
         MoveWorld(direction.x, direction.z);
     }
 
-    void InvokeMoveToComplited(MoveToComlitedReason reason)
+    void InvokeMoveToCompleted(MoveToCompletedReason reason)
     {
         isMoveToCompleted = true;
-        Action<MoveToComlitedReason> action = MoveToComplited;
-        MoveToComplited = null;
+        Action<MoveToCompletedReason> action = MoveToCompleted;
+        MoveToCompleted = null;
         action?.Invoke(reason);
     }
 }
