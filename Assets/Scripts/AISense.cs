@@ -13,22 +13,23 @@ public class AISense : MonoBehaviour
 
     DamagableComponent target;
 
+
     public DamagableComponent Target
     {
         get => target;
         private set
         {
-            if (target != value)
+            if (target == value)
                 return;
 
-                target = value;
-                TargetChanged?.Invoke(target);
-                Debug.Log($"Target changed: {(target == null ? "null" : target.gameObject.name)}");
+            target = value;
+            TargetChanged?.Invoke(target);
+            Debug.Log($"Target changed: {(target == null ? "null" : target.gameObject.name)}");
         }
     }
     private void Update()
     {
-        target = EnemyManager.GetFirstVisibleTarget(transform, viewCone, searchTargets, viewDistance);
+        Target = EnemyManager.GetFirstVisibleTarget(transform, viewCone, searchTargets, viewDistance);
     }
 
 #if UNITY_EDITOR

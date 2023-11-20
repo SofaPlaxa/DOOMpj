@@ -5,6 +5,7 @@ using UnityEngine;
 using UnityEngine.AI;
 using System;
 
+
 public enum MoveToCompletedReason
 {
     Succses,
@@ -13,17 +14,23 @@ public enum MoveToCompletedReason
 }
 
 
+[RequireComponent(typeof(AISense))]
 public class AIController : BaseCharacterController
 {
     bool isMoveToCompleted = true;
     int pathPointIndex;
+
     NavMeshPath path;
+    AISense sense;
+
+    public AISense Sense => sense;
 
     Action<MoveToCompletedReason> MoveToCompleted;
 
     protected override void Awake()
     {
         base.Awake();
+        sense = GetComponent<AISense>();
 
         path = new NavMeshPath();
     }
@@ -31,8 +38,8 @@ public class AIController : BaseCharacterController
     public bool MoveTo(Vector3 targetPos, Action<MoveToCompletedReason> complited = null)
     {
         if (!isMoveToCompleted)
-            InvokeMoveToCompleted(MoveToCompletedReason.Aborted);
-
+            AbortMoveTo();
+                
         MoveToCompleted = complited;
        bool hasPath = NavMesh.CalculatePath(transform.position, targetPos, NavMesh.AllAreas, path);
 
@@ -107,5 +114,10 @@ public class AIController : BaseCharacterController
         Action<MoveToCompletedReason> action = MoveToCompleted;
         MoveToCompleted = null;
         action?.Invoke(reason);
+    }
+
+    public void AbortMoveTo()
+    {
+        InvokeMoveToCompleted(MoveToCompletedReason.Aborted);
     }
 }

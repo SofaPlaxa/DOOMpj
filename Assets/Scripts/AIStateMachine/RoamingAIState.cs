@@ -15,17 +15,26 @@ public class RoamingAIState : AIState
     public override void Enable()
     {
         AIController.MoveTo(GetRandomPosRadius(10), HandleMoveToCompleted);
+        AIController.Sense.TargetChanged += HandleTargetChanged;
     }
 
     public override void Disable()
     {
-        
+        AIController.Sense.TargetChanged -= HandleTargetChanged;
+    }
+
+    void HandleTargetChanged(DamagableComponent target)
+    {
+        if(target != null)
+        {
+            AIController.AbortMoveTo();
+            ChangeState("Chasing");
+        }
     }
 
     void HandleMoveToCompleted(MoveToCompletedReason reason)
     {
-        Debug.Log("reason");
-        if (reason == MoveToCompletedReason.Failure)
+        if (reason != MoveToCompletedReason.Succses)
             return;
         ChangeState("Roaming");
     }
