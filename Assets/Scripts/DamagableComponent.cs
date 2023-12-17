@@ -13,21 +13,21 @@ public class DamagableComponent : MonoBehaviour
 
     bool isDead;
 
-    private void Start()
+    public void Start()
     {
         currentHp = hp;
     }
 
     public bool IsDead => isDead;
 
-    public bool IsAlive => !isDead;
-
     public int Hp
     {
-        get => hp;
+        get => currentHp;
         set
         {
-            if (isDead) return;
+            if (isDead)
+                return;
+
             currentHp = value;
 
             if (currentHp <= 0)
@@ -37,7 +37,7 @@ public class DamagableComponent : MonoBehaviour
         }
     }
 
-    void Die()
+    public void Die()
     {
         Debug.Log($"{gameObject.name} is dead");
         isDead = true;
@@ -45,7 +45,7 @@ public class DamagableComponent : MonoBehaviour
 
     private void OnEnable()
     {
-        EnemyManager.RegisterEnemy(this); 
+        EnemyManager.RegisterEnemy(this);
     }
 
     private void OnDisable()

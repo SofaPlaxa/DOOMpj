@@ -7,10 +7,10 @@ public class UIAim : MonoBehaviour
 {
     [SerializeField] Image aimImage;
  
-   public bool CanShoot { get; set; }
+   public bool canShoot { get; set; }
 
     private void Update()
     {
-        aimImage.color = CanShoot ? Color.red : Color.white;
+        aimImage.color = canShoot ? Color.red : Color.white;
     }
 }

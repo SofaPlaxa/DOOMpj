@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 [ExecuteAlways]
@@ -8,7 +6,7 @@ public class ProcedureQuad : MonoBehaviour
 
 
    [SerializeField] Material targetMaterial;
-   [SerializeField] float wight = 1;
+   [SerializeField] float width = 1;
    [SerializeField] float height = 1;
    [SerializeField] Texture2D texture;
 
@@ -20,7 +18,7 @@ public class ProcedureQuad : MonoBehaviour
 
     [ContextMenu("Refresh")]
    void Refresh()
-    {
+   {
         MeshFilter meshFilter;
         MeshRenderer meshRenderer;
 
@@ -38,10 +36,10 @@ public class ProcedureQuad : MonoBehaviour
 
         Vector3[] vertices = new Vector3[4]
         {
-            new Vector3(-wight/2, 0, 0),
-            new Vector3(wight/2, 0, 0),
-            new Vector3(-wight/2, height, 0),
-            new Vector3(wight/2, height, 0),
+            new Vector3(-width/2, 0, 0),
+            new Vector3(width/2, 0, 0),
+            new Vector3(-width/2, height, 0),
+            new Vector3(width/2, height, 0),
         };
 
         mesh.vertices = vertices;

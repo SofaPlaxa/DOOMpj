@@ -4,18 +4,26 @@ using UnityEngine;
 
 public class Lava : MonoBehaviour
 {
-    void OnCharacterStay(PlayerController controller)
+    IEnumerator damageRoutine;
+    [SerializeField] int damageAmount = 10;
+
+    IEnumerator ContiniousDamage(DamagableComponent damagableComponent)
     {
-        print($"Lava Player stay: {controller.name}");
+        while (true)
+        {
+            yield return new WaitForSeconds(1);
+            damagableComponent.Hp -= damageAmount;
+            Debug.Log(damagableComponent.Hp);
+        }
     }
 
     void OnCharacterExit()
     {
-        print("Lava Player exit");
+        StopCoroutine(damageRoutine);
     }
 
-    void OnCharacterEnter()
+    void OnCharacterEnter(BaseCharacterController controller)
     {
-        print("Lava Player enter");
+        StartCoroutine(damageRoutine = ContiniousDamage(controller.gameObject.GetComponent<DamagableComponent>()));
     }
 }

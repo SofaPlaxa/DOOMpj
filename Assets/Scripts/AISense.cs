@@ -37,8 +37,6 @@ public class AISense : MonoBehaviour
     {
         UnityEditor.Handles.color = new Color(1, 0, 0, 0.2f);
 
-        UnityEditor.Handles.zTest = UnityEngine.Rendering.CompareFunction.LessEqual;
-
         UnityEditor.Handles.DrawSolidArc(
             transform.position,
             Vector3.up,

@@ -5,65 +5,51 @@ using UnityEngine;
 [RequireComponent(typeof(CharacterController))]
 public abstract class BaseCharacterController : MonoBehaviour
 {
-    [SerializeField] float speed = 10;
+    [SerializeField] float speed;
 
-
-    CharacterController characterController;
     Vector3 surfaceNormal;
+    CharacterController characterController;
     float verticalSpeed;
     GameObject floor;
-
 
     GameObject Floor
     {
         get => floor;
         set
         {
-            if (floor != value && floor != null)
+            if (floor != value)
             {
-                floor.SendMessage("OnCharacterExit", this, SendMessageOptions.DontRequireReceiver);
-
+                if (floor != null)
+                    floor.SendMessage("OnCharacterExit", this, SendMessageOptions.DontRequireReceiver);
                 if (value != null)
-                {
-                    value.SendMessage("OnCharacterrEnter", this, SendMessageOptions.DontRequireReceiver);
-                }
-
+                    value.SendMessage("OnCharacterEnter", this, SendMessageOptions.DontRequireReceiver);
             }
+
             floor = value;
         }
-
     }
 
     protected virtual void Awake()
     {
-
         characterController = GetComponent<CharacterController>();
-
     }
 
     protected void Rotate(float angle)
     {
         transform.Rotate(new Vector3(0, angle));
-
     }
-
 
     protected void SetRotation(float angle)
     {
         transform.rotation = Quaternion.Euler(new Vector3(0, angle));
     }
 
-
     protected void MoveLocal(float right, float forward)
     {
         if (characterController.isGrounded)
-        {
             verticalSpeed = -0.1f;
-        }
         else
-        {
             verticalSpeed += Physics.gravity.y * Time.deltaTime;
-        }
 
 
         Vector3 input = new Vector3(right, 0, forward);
@@ -87,18 +73,25 @@ public abstract class BaseCharacterController : MonoBehaviour
     {
         Vector3 direction = transform.InverseTransformDirection(new Vector3(x, 0, z));
 
-
         MoveLocal(direction.x, direction.z);
-
     }
 
+    private void OnControllerColliderHit(ControllerColliderHit hit)
+    {
+        Debug.DrawLine(hit.point, hit.point + hit.normal * 10, Color.red);
+
+        surfaceNormal = hit.normal;
+    }
 
     void GroundCheck()
     {
-        if (Physics.Linecast(transform.position, transform.position + Vector3.down * (characterController.height / 2 + 0.1f), out RaycastHit hit))
+        if (Physics.Linecast(
+            transform.position,
+            transform.position + Vector3.down * (characterController.height / 2 + 0.1f),
+            out RaycastHit hit))
         {
             Floor = hit.collider.gameObject;
-            Floor.SendMessage("OnCharacterStay", SendMessageOptions.DontRequireReceiver);
+            Floor.SendMessage("OnCharacterStay", this, SendMessageOptions.DontRequireReceiver);
         }
         else
         {

@@ -22,6 +22,6 @@ public class AIStateMachine
     {
         activeState?.Disable();
         activeState = States[stateId];
-        activeState.Enable();
+        States[stateId].Enable();
     }
 }

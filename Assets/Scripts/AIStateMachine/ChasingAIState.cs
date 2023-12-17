@@ -10,12 +10,11 @@ public class ChasingAIState : AIState
     {
         AIController = aiController;
     }
+    IEnumerator chasingRoutine;
     public override void Enable()
     {
         Coroutines.StartCoroutine(chasingRoutine = ChasingRoutine());
     }
-
-    IEnumerator chasingRoutine;
     public override void Disable()
     {
         Coroutines.StopCoroutine(chasingRoutine);

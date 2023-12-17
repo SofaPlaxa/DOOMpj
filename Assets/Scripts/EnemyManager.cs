@@ -3,7 +3,7 @@ using System.Linq;
 using System.Collections.Generic;
 using UnityEngine;
 
-public static class EnemyManager
+public class EnemyManager
 {
     static HashSet<DamagableComponent> damagableComponents = new HashSet<DamagableComponent>();
 
@@ -32,9 +32,11 @@ public static class EnemyManager
 
             Vector3 enemyDirection2D = enemyDirection;
             enemyDirection.y = 0;
+            enemyDirection2D = enemyDirection2D.normalized;
+
             enemyDirection = enemyDirection.normalized;
 
-            float angle = Mathf.Acos(Vector3.Dot(sourceTransform.forward, enemyDirection)) * Mathf.Rad2Deg;
+            float angle = Mathf.Acos(Vector3.Dot(sourceTransform.forward, enemyDirection2D)) * Mathf.Rad2Deg;
 
             if (angle < coneAngle)
             {
@@ -54,13 +56,14 @@ public static class EnemyManager
         return null;
     }
     static bool AimLineAttack(Transform sourceTransform, Vector3 targetPos)
+    {
+        if (Physics.Linecast(sourceTransform.position, targetPos, out RaycastHit hit)
+        && hit.collider.GetComponent<DamagableComponent>())
         {
-            if (Physics.Linecast(sourceTransform.position, targetPos, out RaycastHit hit) && hit.collider.GetComponent<DamagableComponent>())
-            {
-                Debug.DrawLine(sourceTransform.position, targetPos, Color.green);
-                return true;
-            }
-            return false;
+            Debug.DrawLine(sourceTransform.position, targetPos, Color.green);
+            return true;
         }
+        return false;
+    }
 }
 
