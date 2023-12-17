@@ -1,4 +1,4 @@
-Shader "Billboard/8Directional"
+Shader "Custom/4DirectionalBillboard"
 {
     Properties
     {
@@ -8,8 +8,7 @@ Shader "Billboard/8Directional"
     {
         Tags 
         { 
-            "RenderType"      = "Transparent" 
-            "DisableBatching" = "True" 
+            "RenderType"      = "Opaque" 
         }
         LOD 100
         Cull off
@@ -37,7 +36,7 @@ Shader "Billboard/8Directional"
                 UNITY_FOG_COORDS(1)
                 float4 vertex : SV_POSITION;
                 float3 normal : NORMAL;
-                float angle : TEXCOORD1;
+                float2 cameraDir : TEXCOORD1;
             };
 
             sampler2D _MainTex;
@@ -47,54 +46,51 @@ Shader "Billboard/8Directional"
             v2f vert (appdata v)
             {
                 v2f o;
-
+                o.vertex = UnityObjectToClipPos(v.vertex);
                 o.uv = TRANSFORM_TEX(v.uv, _MainTex);
                 UNITY_TRANSFER_FOG(o,o.vertex);
                 o.normal = v.normal;
 
+                // https://docs.unity3d.com/Packages/com.unity.shadergraph@6.9/manual/Camera-Node.html
                 float3 cameraDir = -1 * mul(UNITY_MATRIX_M, transpose(mul(unity_WorldToObject, UNITY_MATRIX_I_V)) [2].xyz);
-
                 cameraDir.y = 0;
-                
                 float2 cameraDir2D = normalize(cameraDir.xz);
-                
 
-                float2 vectorForward2D = mul(UNITY_MATRIX_M, float4(0, 0, 1, 0)).xz;
-
-                float angle = dot(vectorForward2D, cameraDir2D);
-                float angleRad = acos(angle);
-
-                float3 crossProduct = cross(float3(vectorForward2D.x, 0, vectorForward2D.y), float3(cameraDir.x, 0, cameraDir.y));
-
-                if(dot(crossProduct, float3(0, 1, 0)) < 0)
-                    angleRad =- angleRad;
-
-                
-                float angleNormalized = angleRad / 3.1415;
-
-                
-                o.angle = (angleNormalized + 1) / 2;
-
-                float3 newVertex;
-                Unity_RotateAboutAxis_Radians_float(v.vertex, float3(0, 1, 0), angleRad, newVertex);
-
-                o.vertex = UnityObjectToClipPos(newVertex);
+                o.cameraDir = cameraDir2D;
 
                 return o;
             }
 
             fixed4 frag (v2f i) : SV_Target
             {
+                float3 norm = mul(UNITY_MATRIX_M, float4(i.normal, 0));
 
-                float tileAngle = fmod(i.angle + 0.0625, 1);
+                float2 vectorForward2D = mul(UNITY_MATRIX_M, float4(0,0,1,0)).xz;
+                
+                float angle = dot(vectorForward2D, i.cameraDir);
 
-                float tile = floor(lerp(0, 8, tileAngle));
+                float angleRad = acos(angle);
+
+                float angleNormalized = angleRad / 3.1415;
+
+                float3 crossProduct = cross(
+                    float3(vectorForward2D.x, 0, vectorForward2D.y),
+                    float3(i.cameraDir.x, 0, i.cameraDir.y));
+                
+                if(dot(crossProduct, float3(0,1,0)) < 0)
+                    angleRad =  -angleRad;
+
+                float tile = floor(lerp(0, 5, angleNormalized));            
                 
                 float2 uv;
-                Unity_Flipbook_float(i.uv, 4, 2, tile, float2(0, 1), uv);
+                Unity_Flipbook_float(i.uv, 5, 1, tile, float2(1,1), uv);
 
+                if(dot(crossProduct, float3(0,1,0)) > 0)
+                    uv.x = -uv.x;
+
+           
                 fixed4 color = tex2D(_MainTex, uv);
-
+                
                 if(color.a < 0.001)
                     discard;
 
