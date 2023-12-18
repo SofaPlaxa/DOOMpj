@@ -5,10 +5,9 @@ using UnityEngine;
 public static class Coroutines
 {
     class CoroutinesRunner : MonoBehaviour
-    {
-
+    { 
+    
     }
-
     static CoroutinesRunner coroutinesRunner;
 
     public static void StartCoroutine(IEnumerator coroutine)
