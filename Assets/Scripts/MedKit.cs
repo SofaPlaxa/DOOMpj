@@ -4,15 +4,15 @@ using UnityEngine;
 
 public class MedKit : MonoBehaviour
 {
-    [SerializeField] int heal = 20;
+    [SerializeField] int amountToHeal = 20;
     DamagableComponent damagableComponent;
 
-    private void OnTriggerEnter(Collider other)
+    private void OnTriggerEnter(Collider collider)
     {
-        if (other.gameObject.TryGetComponent<DamagableComponent>(out DamagableComponent hinge))
+        if (collider.TryGetComponent<DamagableComponent>(out DamagableComponent damagable))
         {
-            damagableComponent = other.gameObject.GetComponent<DamagableComponent>();
-            damagableComponent.Hp += heal;
+            damagableComponent = collider.GetComponent<DamagableComponent>();
+            damagableComponent.Hp += amountToHeal;
             Debug.Log(damagableComponent.Hp);
             Destroy(gameObject);
         }
